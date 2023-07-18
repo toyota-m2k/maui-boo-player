@@ -17,7 +17,13 @@ public class Item {
     [JsonProperty("duration")]
     public long Duration { get; set; }
 
-    public string? GetUrl(HostEntry host) {
+    [JsonIgnore]
+    public bool IsPhoto => Type == "jpg" || Type == "png";
+    [JsonIgnore]
+    public bool IsVideo => Type == "mp4" || Type == "mp3";
+
+    public string? GetUrl(HostEntry? host) {
+        if(host==null) return null;
         string type;
         string auth = "";
         if (Type == "mp4" || Type == "mp3") {

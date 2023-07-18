@@ -1,35 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<FlyoutPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:local="clr-namespace:BooPlayer.View"
              x:Class="BooPlayer.MainPage">
-    <HorizontalStackLayout>
-        <ListView 
-            ItemsSource="{Binding ItemList.Value, Mode=OneWay}"
-            SelectedItem="{Binding CurrentItem.Value}"
-            SelectionMode="Single"
-            >
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <StackLayout Padding="5">
-                            <Label Text="{Binding Name}"/>
-                            <Label Text="{Binding Size}"/>
-                        </StackLayout>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-        <Image
-            Source="{Binding CurrentPhotoUrl.Value, Mode=OneWay}"
-            IsVisible="{Binding IsPhoto}"
-            
-            />
-        <toolkit:MediaElement 
-            Source="{Binding CurrentVideoUrl.Value, Mode=OneWay}"
-            ShouldShowPlaybackControls="True" 
-            IsVisible="{Binding IsVideo}"
-            />
-    </HorizontalStackLayout>
+    <FlyoutPage.Flyout>
+        <local:ListPage/>
+    </FlyoutPage.Flyout>
+    <FlyoutPage.Detail>
+        <local:ViewerPage/>
+    </FlyoutPage.Detail>
 
-</ContentPage>
+</FlyoutPage>

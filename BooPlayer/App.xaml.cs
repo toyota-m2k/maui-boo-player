@@ -31,11 +31,12 @@ public partial class App : Application
         //                builder.AddFilter(level => true);
         //                builder.AddConsole();
         //            });
-                    
+
         //        })
         //        .Build();
 
-        MainPage = new AppShell();
+        //MainPage = new AppShell();
+        MainPage = new MainPage();
         
 	}
 }

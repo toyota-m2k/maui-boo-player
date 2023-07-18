@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace BooPlayer.Utils; 
 public static class CsExtensions {
-    public static T? GetValue<T>(this WeakReference<T> w) where T : class {
-        if (!w.TryGetTarget(out var target)) {
+    public static T? GetValue<T>(this WeakReference<T>? w) where T : class {
+        if (w==null || !w.TryGetTarget(out var target)) {
             return null;
         }
         return target;

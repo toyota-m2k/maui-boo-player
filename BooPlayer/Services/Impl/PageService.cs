@@ -36,10 +36,10 @@ internal class PageService : IPageService {
     }
 
     public async Task<string?> ShowPasswordDialog() {
-        var page = (Application.Current?.MainPage as AppShell)?.CurrentPage;
+        var page = Application.Current?.MainPage;
         if (page == null) return null;
         return await page.Dispatcher.DispatchAsync(async () => {
-            await Task.Delay(1000);
+            //await Task.Delay(1000);
             //await page.DisplayAlert("HOGE", "FUGA", "OK");
             var result = await page.DisplayPromptAsync("Password", "Enter password", "OK", "Cancel");
             return result;

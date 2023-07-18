@@ -2,7 +2,7 @@
 
 namespace BooPlayer;
 
-public partial class MainPage : ContentPage
+public partial class MainPage : FlyoutPage
 {
 	private ItemListViewModel ViewModel { 
 		set => BindingContext = value;
@@ -14,11 +14,13 @@ public partial class MainPage : ContentPage
 		ViewModel = MauiProgram.App.Services.GetRequiredService<ItemListViewModel>();
 		InitializeComponent();
 
-		ViewModel.CurrentHostEntry.Value = new Models.HostEntry() {
-			Id = 0,
-			Address = "192.168.0.151:6001",
-			Name = "MakibaO",
-		};
+		Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () => {
+			ViewModel.CurrentHostEntry.Value = new Models.HostEntry() {
+				Id = 0,
+				Address = "192.168.0.152:6001",
+				Name = "MakibaO",
+			};
+		});
 
 		//Task.Run(async () => {
 		//	await Task.Delay(3000);
