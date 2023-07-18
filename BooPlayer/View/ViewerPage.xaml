@@ -47,10 +47,7 @@
             />
             <VerticalStackLayout x:Name="ControlPanel" HorizontalOptions="Fill" Margin="20,0" VerticalOptions="End">
                 <StackLayout Orientation="Horizontal">
-                    <Button Text="Play" Command="{Binding PlayerModel.PlayCommand}" Style="{StaticResource ButtonStyle}">
-                        <Button.ImageSource>
-                            <SvgImageSource Source="Resources/Images/play.svg"/>
-                        </Button.ImageSource>
+                    <Button ImageSource="play.png" Text="Play" Command="{Binding PlayerModel.PlayCommand}" Style="{StaticResource ButtonStyle}">
                     </Button>
 
                     <Button Text="Pause" Command="{Binding PlayerModel.PauseCommand}" Style="{StaticResource ButtonStyle}"/>
@@ -60,7 +57,7 @@
                     x:Name="PositionSlider"
                     HorizontalOptions="Fill"
                     Minimum="0" Maximum="{Binding PlayerModel.RODuration.Value, Mode=OneWay, Converter={StaticResource TimeSpanDoubleConverter}}"
-                    Value="{Binding PlayerModel.SliderPosition, Mode=TwoWay, Converter={StaticResource TimeSpanDoubleConverter}}"/>
+                    />
             </VerticalStackLayout>
         </Grid>
     </Grid>
