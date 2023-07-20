@@ -1,6 +1,7 @@
 ﻿using BooPlayer.Models;
 using BooPlayer.Services;
 using BooPlayer.Utils;
+using BooPlayer.View;
 using Microsoft.Extensions.Logging;
 using Reactive.Bindings;
 using System.Reactive.Linq;
@@ -13,8 +14,9 @@ internal class ItemListViewModel {
 
     private static List<Item> _emptyList = new List<Item>();
 
-    public ReactiveProperty<HostEntry?> CurrentHostEntry { get; } = new ();
+    public ReactiveProperty<IHostEntry?> CurrentHostEntry { get; } = new ();
     public ReactiveCommand ReloadListCommand { get; } = new ();
+    public ReactiveCommand SelectHostCommand { get; } = new();
     public ReactiveProperty<List<Item>> ItemList { get; } = new ( _emptyList );
     //public ReactiveProperty<int> CurrentIndex { get; } = new ( -1 );
     //public ReadOnlyReactiveProperty<Item?> CurrentItem { get; }
@@ -123,7 +125,7 @@ internal class ItemListViewModel {
     }
 
 
-    private async void LoadItemList(HostEntry? entry) {
+    private async void LoadItemList(IHostEntry? entry) {
         if (entry == null) {
             ItemList.Value = _emptyList;
             return;

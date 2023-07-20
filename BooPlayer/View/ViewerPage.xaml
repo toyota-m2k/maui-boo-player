@@ -2,28 +2,10 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:common="using:BooPlayer.Utils"
              x:Class="BooPlayer.View.ViewerPage"
              Title="ViewerPage">
     <ContentPage.Resources>
-        <ResourceDictionary>
-            <common:TimeSpanDoubleConverter x:Key="TimeSpanDoubleConverter"/>
-        </ResourceDictionary>
-        <Style x:Key="ButtonStyle" TargetType="Button">
-            <Setter Property="VisualStateManager.VisualStateGroups">
-                <VisualStateGroupList>
-                    <VisualStateGroup x:Name="WindowsStates">
-                        <VisualState x:Name="Normal" />
-                        <VisualState x:Name="Pressed">
-                            <VisualState.Setters>
-                                <Setter Property="Scale" Value="0.9" />
-                                <Setter Property="BackgroundColor" Value="#88FFFFFF" />
-                            </VisualState.Setters>
-                        </VisualState>
-                    </VisualStateGroup>
-                </VisualStateGroupList>
-            </Setter>
-        </Style>        
+        <ResourceDictionary Source="../CommonResources.xaml"/>
     </ContentPage.Resources>
     <Grid>
         <Image
@@ -47,11 +29,11 @@
             />
             <VerticalStackLayout x:Name="ControlPanel" HorizontalOptions="Fill" Margin="20,0" VerticalOptions="End">
                 <StackLayout Orientation="Horizontal">
-                    <Button ImageSource="play.png" Text="Play" Command="{Binding PlayerModel.PlayCommand}" Style="{StaticResource ButtonStyle}">
+                    <Button ImageSource="play.png" Text="Play" Command="{Binding PlayerModel.PlayCommand}" Style="{StaticResource PushButtonStyle}">
                     </Button>
 
-                    <Button Text="Pause" Command="{Binding PlayerModel.PauseCommand}" Style="{StaticResource ButtonStyle}"/>
-                    <Button Text="Stop" Command="{Binding PlayerModel.StopCommand}" Style="{StaticResource ButtonStyle}"/>
+                    <Button Text="Pause" Command="{Binding PlayerModel.PauseCommand}" Style="{StaticResource PushButtonStyle}"/>
+                    <Button Text="Stop" Command="{Binding PlayerModel.StopCommand}" Style="{StaticResource PushButtonStyle}"/>
                 </StackLayout>
                 <Slider
                     x:Name="PositionSlider"

@@ -5,38 +5,33 @@ namespace BooPlayer;
 
 public partial class App : Application
 {
-    //public IHost Host {
-    //    get;
-    //}
-
-    //public static T GetService<T>()
-    //    where T : class {
-    //    if ((App.Current as App)!.Host.Services.GetService(typeof(T)) is not T service) {
-    //        throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
-    //    }
-
-    //    return service;
-    //}
-    
     public App()
 	{
 		InitializeComponent();
 
-        //Host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
-        //        .UseContentRoot(AppContext.BaseDirectory)
-        //        .ConfigureServices((context, service) => {
-        //            service
-        //            .AddHttpClient()
-        //            .AddLogging(builder => {
-        //                builder.AddFilter(level => true);
-        //                builder.AddConsole();
-        //            });
-
-        //        })
-        //        .Build();
-
         //MainPage = new AppShell();
         MainPage = new MainPage();
-        
 	}
+
+    
+
+    //protected override Window CreateWindow(IActivationState? activationState) {
+    //    var window = base.CreateWindow(activationState);
+    //    window.Activated += OnActivated;
+    //    //MauiProgram.WindowSubject.OnNext(window);
+    //    return window;
+    //}
+
+    //private void OnActivated(object? sender, EventArgs e) {
+    //    if(sender is Window window) {
+    //        window.Activated -= OnActivated;
+    //        Task.Run(async () => {
+    //            //await Task.Delay(1000);
+    //            MauiProgram.WindowSubject.OnNext(window);
+    //            //await Dispatcher.DispatchAsync(() => {
+    //            //    MauiProgram.WindowSubject.OnNext(window);
+    //            //});
+    //        });
+    //    }
+    //}
 }

@@ -11,8 +11,6 @@ internal class UserSettingsService : IUserSettingsService {
 
     public UserSettings UserSettings { get; private set; }
 
-    UserSettings IUserSettingsService.UserSettings => throw new NotImplementedException();
-
     public UserSettingsService(IFileService fileService, ILoggerFactory loggerFactory) {
         _fileService = fileService;
         _logger = loggerFactory.CreateLogger("Settings");

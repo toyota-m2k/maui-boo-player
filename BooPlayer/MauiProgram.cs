@@ -8,6 +8,7 @@ using System.Reflection;
 using BooPlayer.ViewModel;
 using Newtonsoft.Json;
 using BooPlayer.Models;
+using System.Reactive.Subjects;
 
 namespace BooPlayer;
 
@@ -15,6 +16,14 @@ public static class MauiProgram
 {
 	public static MauiApp App = null!;
 	public static ILogger Logger = null!;
+
+	private static BehaviorSubject<bool> _isReady = new(false);
+	public static IObservable<bool> IsReady => _isReady;
+
+	public static void MainViewLoaded() {
+		_isReady.OnNext(true);
+	}
+
 
 	public static T GetService<T>() where T : class {
         if(App.Services.GetService(typeof(T)) is not T service) {
@@ -46,7 +55,7 @@ public static class MauiProgram
 			// System Services
 			.AddHttpClient()
 
-			// My Services
+            // My Services
             .AddSingleton<IFileService, FileService>()
             .AddSingleton<IUserSettingsService, UserSettingsService>()
             .AddSingleton<IMainThreadService, MainThradService>()
@@ -55,6 +64,7 @@ public static class MauiProgram
 
 			// View Models
 			.AddSingleton<ItemListViewModel>()
+            .AddTransient<HostListViewModel>()
             ;
 
 #if DEBUG

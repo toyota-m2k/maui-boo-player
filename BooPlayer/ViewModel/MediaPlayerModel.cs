@@ -22,7 +22,7 @@ internal class MediaPlayerModel {
     public ReactiveCommand PauseCommand { get; } = new();
     public ReactiveCommand StopCommand { get; } = new();
 
-    class SeekMediator {
+    class SeekMediator : IDisposable {
         private WeakReference<MediaElement>? mPlayer;
         private MediaElement? Player {
             get => mPlayer.GetValue();
@@ -97,12 +97,23 @@ internal class MediaPlayerModel {
         public void SeekTo(TimeSpan position) {
             Player?.SeekTo(position);
         }
+
+        public void Dispose() {
+            Player?.Stop();
+            Player = null;
+            Slider = null;
+        }
     }
 
     private SeekMediator mSeekMediator = null!;
 
     public void AttachPlayer(MediaElement player, Slider slider) {
         mSeekMediator = new SeekMediator(this, player, slider);
+    }
+
+    public void DetachPlayer() {
+        mSeekMediator?.Dispose();
+        mSeekMediator = null!;
     }
 
     public MediaPlayerModel() {

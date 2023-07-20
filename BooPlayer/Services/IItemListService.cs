@@ -3,5 +3,5 @@
 namespace BooPlayer.Services;
 
 internal interface IItemListService {
-    Task<ItemList> GetItemListAsync(HostEntry host);
+    Task<ItemList> GetItemListAsync(IHostEntry host);
 }

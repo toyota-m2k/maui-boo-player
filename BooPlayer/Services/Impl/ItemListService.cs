@@ -9,6 +9,7 @@ namespace BooPlayer.Services.Impl;
 internal class ItemListService : IItemListService {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IPageService _pageService;
+    private CancellationTokenSource? _cancellationTokenSource = null;
 
 
     private HttpClient httpClient => _httpClientFactory.CreateClient();
@@ -18,18 +19,29 @@ internal class ItemListService : IItemListService {
         _pageService = pageService;
     }
 
-    public async Task<ItemList> GetItemListAsync(HostEntry host) {
-        while (true) {
-            var itemList = await GetItemListCoreAsync(host);
-            if (itemList != null) {
-                return itemList;
+    public async Task<ItemList> GetItemListAsync(IHostEntry host) {
+        if (_cancellationTokenSource != null) {
+            _cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Dispose();
+            _cancellationTokenSource = null;
+        }
+        _cancellationTokenSource = new CancellationTokenSource();
+        try {
+            while (true) {
+                var itemList = await GetItemListCoreAsync(host, _cancellationTokenSource.Token);
+                if (itemList != null) {
+                    return itemList;
+                }
             }
+        } finally {
+            _cancellationTokenSource.Dispose();
+            _cancellationTokenSource = null;
         }
     }
 
-    private async Task<ItemList?> GetItemListCoreAsync(HostEntry host) {
+    private async Task<ItemList?> GetItemListCoreAsync(IHostEntry host, CancellationToken ct) {
         var url = host.AccessToken.IsEmpty() ? $"http://{host.Address}/list?type=all" : $"http://{host.Address}/list?type=all&auth={host.AccessToken}";
-        using (var response = await httpClient.GetAsync(url)) {
+        using (var response = await httpClient.GetAsync(url, ct)) {
             if (response?.IsSuccessStatusCode == true) {
                 var json = await response.Content.ReadAsStringAsync();
                 var itemList = JsonConvert.DeserializeObject<ItemList?>(json);
@@ -62,7 +74,7 @@ internal class ItemListService : IItemListService {
     }
 
 
-    private async Task<bool> Authenticate(HostEntry host, HttpResponseMessage response) {
+    private async Task<bool> Authenticate(IHostEntry host, HttpResponseMessage response) {
         var challenge = await GetChallenge(response);
         if (challenge.IsEmpty()) {
             throw new InvalidDataException("no challenge");
@@ -94,7 +106,7 @@ internal class ItemListService : IItemListService {
         return HashBuilder.SHA256.Append(hashedPassword).Append(challenge).Build().AsBase64String;
     }
 
-    private async Task<string?> AuthWithPassword(HostEntry host, string challenge, string password) {
+    private async Task<string?> AuthWithPassword(IHostEntry host, string challenge, string password) {
         var url = $"http://{host.Address}/auth";
         var passPhrase = GetPassPhrase(challenge, password);
         var content = new StringContent(passPhrase, Encoding.UTF8, "text/plain");

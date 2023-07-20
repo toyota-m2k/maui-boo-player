@@ -1,22 +1,32 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:BooPlayer.Models;assembly=BooPlayer"
              x:Class="BooPlayer.View.ListPage"
              Title="ListPage">
-    <ListView 
+    <ContentPage.Resources>
+        <ResourceDictionary Source="../CommonResources.xaml"/>
+    </ContentPage.Resources>
+    <VerticalStackLayout Padding="5">
+        <HorizontalStackLayout>
+            <Button Style="{StaticResource IconButtonStyle}" ImageSource="settings.png" Command="{Binding SelectHostCommand}"/>
+        </HorizontalStackLayout>
+        <ListView 
             ItemsSource="{Binding ItemList.Value, Mode=OneWay}"
             SelectedItem="{Binding CurrentItem.Value}"
             SelectionMode="Single"
             >
-        <ListView.ItemTemplate>
-            <DataTemplate>
-                <ViewCell>
-                    <StackLayout Padding="5">
-                        <Label Text="{Binding Name}"/>
-                        <Label Text="{Binding Size}"/>
-                    </StackLayout>
-                </ViewCell>
-            </DataTemplate>
-        </ListView.ItemTemplate>
-    </ListView>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="models:Item">
+                    <ViewCell>
+                        <StackLayout Padding="5">
+                            <Label Text="{Binding Name}" FontAttributes="Bold"/>
+                            <Label Text="{Binding Size}"/>
+                            <Border HeightRequest="1" BackgroundColor="Gray"/>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </VerticalStackLayout>
 </ContentPage>

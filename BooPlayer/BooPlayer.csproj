@@ -54,7 +54,13 @@
 
 	<ItemGroup>
 	  <None Remove="appsettings.json" />
+	  <None Remove="Resources\Images\delete.svg" />
+	  <None Remove="Resources\Images\pause.svg" />
+	  <None Remove="Resources\Images\pencil.svg" />
 	  <None Remove="Resources\Images\play.svg" />
+	  <None Remove="Resources\Images\plus_box.svg" />
+	  <None Remove="Resources\Images\settings.svg" />
+	  <None Remove="Resources\Images\stop.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -72,6 +78,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="View\HostListPage.xaml.cs">
+	    <DependentUpon>HostListPage.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="CommonResources.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="View\HostListPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="View\ListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

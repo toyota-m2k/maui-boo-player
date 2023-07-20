@@ -22,7 +22,7 @@ public class Item {
     [JsonIgnore]
     public bool IsVideo => Type == "mp4" || Type == "mp3";
 
-    public string? GetUrl(HostEntry? host) {
+    public string? GetUrl(IHostEntry? host) {
         if(host==null) return null;
         string type;
         string auth = "";

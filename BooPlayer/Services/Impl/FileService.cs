@@ -8,7 +8,15 @@ internal class FileService : IFileService {
     public string CacheDirectory => FileSystem.CacheDirectory;
 
     public string SQLiteFilePath => Path.Combine(DataDirectory, _configuration["SQLiteFileName"]??"boo.db");
-    public string UserSettingsFilePath => Path.Combine(DataDirectory, _configuration["UserSettingsFileName"]?? "user.json");
+    //public string UserSettingsFilePath => Path.Combine(DataDirectory, _configuration["UserSettingsFileName"]?? "user.json");
+    public string UserSettingsFilePath {
+        get {
+            var dataDirectory = FileSystem.AppDataDirectory;
+            var userSettingsFileName = _configuration["UserSettingsFileName"] ?? "user.json";
+            var path = Path.Combine(dataDirectory, userSettingsFileName);
+            return path;
+        }
+    }
 
     public FileService(IConfiguration configuration) {
         _configuration = configuration;

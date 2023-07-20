@@ -4,4 +4,6 @@ internal interface IPageService {
     Task ShowConfirmationMessage(string title, string message);
     Task<bool> ShowOkCancelMessage(string title, string message);
     Task<bool> ShowYesNoMessage(string title, string message);
+
+    Task ShowModalDialog(Page dialogPage);
 }
