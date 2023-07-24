@@ -7,11 +7,16 @@
     <ContentPage.Resources>
         <ResourceDictionary Source="../CommonResources.xaml"/>
     </ContentPage.Resources>
-    <VerticalStackLayout Padding="5">
-        <HorizontalStackLayout>
-            <Button Style="{StaticResource IconButtonStyle}" ImageSource="settings.png" Command="{Binding SelectHostCommand}"/>
+    <Grid Padding="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <HorizontalStackLayout Grid.Row="0">
+            <ImageButton Source="settings.png" Command="{Binding SelectHostCommand}"/>
         </HorizontalStackLayout>
-        <ListView 
+        <ListView
+            Grid.Row="1"
             ItemsSource="{Binding ItemList.Value, Mode=OneWay}"
             SelectedItem="{Binding CurrentItem.Value}"
             SelectionMode="Single"
@@ -28,5 +33,5 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-    </VerticalStackLayout>
+    </Grid>
 </ContentPage>

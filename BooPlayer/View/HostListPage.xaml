@@ -12,34 +12,32 @@
     <VerticalStackLayout Spacing="5" HorizontalOptions="Center" VerticalOptions="Center">
         <HorizontalStackLayout Spacing="5">
             <Label Text="Hosts" FontSize="Large"/>
-            <Button Style="{StaticResource IconButtonStyle}" ImageSource="plus_box.png"
+            <ImageButton Source="plus_box.png"
                     Command="{Binding AddHostCommand}" 
                     IsEnabled="{Binding IsEditing.Value, Converter={StaticResource NegBoolConverter}, Mode=OneWay}"/>
-            <Button ImageSource="pencil.png" Style="{StaticResource IconButtonStyle}"/>
         </HorizontalStackLayout>
 
         <VerticalStackLayout Spacing="10" IsVisible="{Binding IsEditing.Value, Mode=OneWay}">
             <Entry Text="{Binding EditingName.Value, Mode=TwoWay}" Placeholder="Name"/>
             <Entry Text="{Binding EditingAddress.Value, Mode=TwoWay}" Placeholder="Address"/>
             <HorizontalStackLayout Spacing="10">
-                <Button Text="OK" Style="{StaticResource PushButtonStyle}" Command="{Binding EndEditCommand}" CommandParameter="True" IsEnabled="{Binding CanCompleteEdit.Value, Mode=OneWay}"/>
-                <Button Text="Cancel" Style="{StaticResource PushButtonStyle}" Command="{Binding EndEditCommand}" CommandParameter="False"/>
+                <Button Text="OK" Command="{Binding EndEditCommand}" CommandParameter="True" IsEnabled="{Binding CanCompleteEdit.Value, Mode=OneWay}"/>
+                <Button Text="Cancel" Command="{Binding EndEditCommand}" CommandParameter="False"/>
             </HorizontalStackLayout>
         </VerticalStackLayout>
 
-        <Border BackgroundColor="Black" StrokeThickness="1">
+        <Border>
             <CollectionView 
-            x:Name="HostListView"
-            ItemsSource="{Binding Hosts}"
-            SelectionMode="Single"
-            IsEnabled="{Binding IsEditing.Value, Converter={StaticResource NegBoolConverter}, Mode=OneWay}"
-            SelectedItem="{Binding SelectedHost.Value, Mode=TwoWay}"
-            HeightRequest="300"
-            WidthRequest="300"
-            MaximumHeightRequest="300"
-            MaximumWidthRequest="400"
-                BackgroundColor="White"
-            >
+                x:Name="HostListView"
+                ItemsSource="{Binding Hosts}"
+                SelectionMode="Single"
+                IsEnabled="{Binding IsEditing.Value, Converter={StaticResource NegBoolConverter}, Mode=OneWay}"
+                SelectedItem="{Binding SelectedHost.Value, Mode=TwoWay}"
+                HeightRequest="300"
+                WidthRequest="300"
+                MaximumHeightRequest="300"
+                MaximumWidthRequest="400"
+                >
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Grid Padding="5">
@@ -48,8 +46,8 @@
                                 <Label Text="{Binding Address}"/>
                             </VerticalStackLayout>
                             <HorizontalStackLayout HorizontalOptions="End">
-                                <Button Scale="0.5" ImageSource="pencil.png" Style="{StaticResource IconButtonStyle}" Command="{Binding Source={x:Reference HostListView}, Path=BindingContext.BeginEditCommand}" CommandParameter="{Binding}"/>
-                                <Button Scale="0.5" ImageSource="delete.png" Style="{StaticResource IconButtonStyle}" Command="{Binding Source={x:Reference HostListView}, Path=BindingContext.RemoveHostCommand}" CommandParameter="{Binding}"/>
+                                <ImageButton Source="pencil.png" Command="{Binding Source={x:Reference HostListView}, Path=BindingContext.BeginEditCommand}" CommandParameter="{Binding}"/>
+                                <ImageButton Source="delete.png" Command="{Binding Source={x:Reference HostListView}, Path=BindingContext.RemoveHostCommand}" CommandParameter="{Binding}"/>
                             </HorizontalStackLayout>
                         </Grid>
                     </DataTemplate>

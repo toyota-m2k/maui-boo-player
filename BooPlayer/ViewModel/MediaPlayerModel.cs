@@ -84,7 +84,9 @@ internal class MediaPlayerModel {
         }
 
         private void OnSliderValueChanged(object? sender, ValueChangedEventArgs e) {
-            SeekTo(TimeSpan.FromSeconds(e.NewValue));
+            if (mDragging) {
+                SeekTo(TimeSpan.FromSeconds(e.NewValue));
+            }
         }
 
         private void OnPlayerPositionChanged(object? sender, MediaPositionChangedEventArgs e) {
