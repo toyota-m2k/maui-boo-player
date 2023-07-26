@@ -33,7 +33,6 @@ internal class ItemListViewModel {
 
     public ReadOnlyReactiveProperty<string> CurrentName { get; }
 
-
     public MediaPlayerModel PlayerModel { get; } = new ();
 
     public ItemListViewModel(IItemListService itemListService, IPageService pageService, ILoggerFactory loggerFactory) {
@@ -44,6 +43,9 @@ internal class ItemListViewModel {
         CurrentHostEntry.Subscribe(LoadItemList);
         ReloadListCommand.Subscribe(ReloadItemList);
 
+        //ShowListCommand.Subscribe((it) => {
+        //    ShowList.Value = it == "True";
+        //});
 
         //CurrentItem = CurrentIndex.Select(index => {
         //    if (index < 0 || index >= ItemList.Value.Count) {
@@ -136,6 +138,10 @@ internal class ItemListViewModel {
             ItemList.Value = _emptyList;
             _logger.Error(e);
             await _pageService.ShowConfirmationMessage("Error", $"Failed to load item list from {entry.Name}.");
+        }
+        var page = (Application.Current?.MainPage as FlyoutPage);
+        if(page!=null) {
+            page.IsPresented = true;
         }
     }
 

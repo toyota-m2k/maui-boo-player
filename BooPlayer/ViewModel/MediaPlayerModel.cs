@@ -65,6 +65,7 @@ internal class MediaPlayerModel {
             model.StopCommand.Subscribe(_ => {
                 Player?.Stop();
             });
+
         }
 
         private bool mDragging = false;
@@ -80,6 +81,9 @@ internal class MediaPlayerModel {
         private void OnSliderDragStarted(object? sender, EventArgs e) {
             mPlayingBeforeDragging = Model.IsPlaying.Value;
             Player?.Pause();
+            if(sender is Slider slider) {
+                SeekTo(TimeSpan.FromSeconds(slider.Value));
+            }
             mDragging = true;
         }
 

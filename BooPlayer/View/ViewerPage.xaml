@@ -3,15 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="BooPlayer.View.ViewerPage"
-             Title="ViewerPage">
+             Title="ViewerPage"
+             >
     <ContentPage.Resources>
         <ResourceDictionary Source="../CommonResources.xaml"/>
     </ContentPage.Resources>
-    <Grid>
+    <Grid BackgroundColor="Green">
         <Image
             Source="{Binding CurrentPhotoUrl.Value, Mode=OneWay}"
-            IsVisible="{Binding IsPhoto.Value}"
-            
             />
         <Grid IsVisible="{Binding IsVideo.Value, Mode=OneWay}">
             <toolkit:MediaElement
@@ -29,11 +28,11 @@
             />
             <VerticalStackLayout x:Name="ControlPanel" HorizontalOptions="Fill" Margin="20,0" VerticalOptions="End">
                 <StackLayout Orientation="Horizontal">
-                    <Button ImageSource="play.png" Text="Play" Command="{Binding PlayerModel.PlayCommand}" Style="{StaticResource PushButtonStyle}">
+                    <Button Style="{StaticResource PushButtonStyle}" ImageSource="play.png" Text="Play" Command="{Binding PlayerModel.PlayCommand}">
                     </Button>
 
-                    <Button Text="Pause" Command="{Binding PlayerModel.PauseCommand}" Style="{StaticResource PushButtonStyle}"/>
-                    <Button Text="Stop" Command="{Binding PlayerModel.StopCommand}" Style="{StaticResource PushButtonStyle}"/>
+                    <Button Style="{StaticResource PushButtonStyle}" Text="Pause" Command="{Binding PlayerModel.PauseCommand}"/>
+                    <Button Style="{StaticResource PushButtonStyle}" Text="Stop" Command="{Binding PlayerModel.StopCommand}"/>
                 </StackLayout>
                 <Slider
                     x:Name="PositionSlider"

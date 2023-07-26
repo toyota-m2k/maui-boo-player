@@ -46,5 +46,10 @@ public partial class MainPage : FlyoutPage
         MauiProgram.App.Services.GetRequiredService<IPageService>().ShowModalDialog(new HostListPage());
         Loaded -= OnLoaded;
     }
+
+    //protected override void OnAppearing() {
+    //    base.OnAppearing();
+    //    IsPresented = true;
+    //}
 }
 

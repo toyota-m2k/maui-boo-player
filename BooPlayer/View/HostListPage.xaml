@@ -12,7 +12,7 @@
     <VerticalStackLayout Spacing="5" HorizontalOptions="Center" VerticalOptions="Center">
         <HorizontalStackLayout Spacing="5">
             <Label Text="Hosts" FontSize="Large"/>
-            <ImageButton Source="plus_box.png"
+            <ImageButton Style="{StaticResource IconButtonStyle}" Source="plus_box.png"
                     Command="{Binding AddHostCommand}" 
                     IsEnabled="{Binding IsEditing.Value, Converter={StaticResource NegBoolConverter}, Mode=OneWay}"/>
         </HorizontalStackLayout>
@@ -21,8 +21,8 @@
             <Entry Text="{Binding EditingName.Value, Mode=TwoWay}" Placeholder="Name"/>
             <Entry Text="{Binding EditingAddress.Value, Mode=TwoWay}" Placeholder="Address"/>
             <HorizontalStackLayout Spacing="10">
-                <Button Text="OK" Command="{Binding EndEditCommand}" CommandParameter="True" IsEnabled="{Binding CanCompleteEdit.Value, Mode=OneWay}"/>
-                <Button Text="Cancel" Command="{Binding EndEditCommand}" CommandParameter="False"/>
+                <Button Style="{StaticResource PushButtonStyle}" Text="OK" Command="{Binding EndEditCommand}" CommandParameter="True" IsEnabled="{Binding CanCompleteEdit.Value, Mode=OneWay}"/>
+                <Button Style="{StaticResource PushButtonStyle}" Text="Cancel" Command="{Binding EndEditCommand}" CommandParameter="False"/>
             </HorizontalStackLayout>
         </VerticalStackLayout>
 
@@ -46,8 +46,16 @@
                                 <Label Text="{Binding Address}"/>
                             </VerticalStackLayout>
                             <HorizontalStackLayout HorizontalOptions="End">
-                                <ImageButton Source="pencil.png" Command="{Binding Source={x:Reference HostListView}, Path=BindingContext.BeginEditCommand}" CommandParameter="{Binding}"/>
-                                <ImageButton Source="delete.png" Command="{Binding Source={x:Reference HostListView}, Path=BindingContext.RemoveHostCommand}" CommandParameter="{Binding}"/>
+                                <ImageButton Style="{StaticResource IconButtonStyle}" Source="pencil.png" Command="{Binding Source={x:Reference HostListView}, Path=BindingContext.BeginEditCommand}" CommandParameter="{Binding}" BackgroundColor="Transparent">
+                                    #if Windows
+                                    <ImageButton.Scale>0.5</ImageButton.Scale>
+                                    #endif
+                                </ImageButton>
+                                <ImageButton Style="{StaticResource IconButtonStyle}" Source="delete.png" Command="{Binding Source={x:Reference HostListView}, Path=BindingContext.RemoveHostCommand}" CommandParameter="{Binding}" BackgroundColor="Transparent">
+                                    #if Windows
+                                    <ImageButton.Scale>0.5</ImageButton.Scale>
+                                    #endif
+                                </ImageButton>
                             </HorizontalStackLayout>
                         </Grid>
                     </DataTemplate>
@@ -57,8 +65,8 @@
         </Border>
 
         <HorizontalStackLayout IsVisible="{Binding IsEditing.Value, Converter={StaticResource NegBoolConverter}, Mode=OneWay}" HorizontalOptions="Center">
-            <Button Text="OK" Command="{Binding CompleteCommand}" CommandParameter="True" IsEnabled="{Binding IsReady.Value, Mode=OneWay}"/>
-            <Button Text="Cancel" Command="{Binding CompleteCommand}" CommandParameter="False" IsVisible="{Binding Cancellable}"/>
+            <Button Style="{StaticResource PushButtonStyle}" Text="OK" Command="{Binding CompleteCommand}" CommandParameter="True" IsEnabled="{Binding IsReady.Value, Mode=OneWay}"/>
+            <Button Style="{StaticResource PushButtonStyle}" Text="Cancel" Command="{Binding CompleteCommand}" CommandParameter="False" IsVisible="{Binding Cancellable}"/>
         </HorizontalStackLayout>
     </VerticalStackLayout>
 </ContentPage>

@@ -55,7 +55,9 @@
 
 	<ItemGroup>
 	  <None Remove="appsettings.json" />
+	  <None Remove="Resources\Images\close_box.svg" />
 	  <None Remove="Resources\Images\delete.svg" />
+	  <None Remove="Resources\Images\laptop.svg" />
 	  <None Remove="Resources\Images\pause.svg" />
 	  <None Remove="Resources\Images\pencil.svg" />
 	  <None Remove="Resources\Images\play.svg" />
