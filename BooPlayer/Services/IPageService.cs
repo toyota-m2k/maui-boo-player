@@ -6,4 +6,6 @@ internal interface IPageService {
     Task<bool> ShowYesNoMessage(string title, string message);
 
     Task ShowModalDialog(Page dialogPage);
+    Task RunOnUIThread(Action fn);
+    Task<T> RunOnUIThread<T>(Func<T> fn);
 }

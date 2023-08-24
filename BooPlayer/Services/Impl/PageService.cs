@@ -83,4 +83,16 @@ internal class PageService : IPageService {
         await page.Navigation.PushModalAsync(dialogPage);
     }
 
+    public async Task RunOnUIThread(Action fn) {
+        await WaitForPrepared();
+        var page = Application.Current?.MainPage;
+        if (page == null) throw new InvalidOperationException("No MainPage!!");
+        await page.Dispatcher.DispatchAsync(fn);
+    }
+    public async Task<T> RunOnUIThread<T>(Func<T> fn) {
+        await WaitForPrepared();
+        var page = Application.Current?.MainPage;
+        if (page == null) throw new InvalidOperationException("No MainPage!!");
+        return await page.Dispatcher.DispatchAsync(fn);
+    }
 }

@@ -13,7 +13,14 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <HorizontalStackLayout Grid.Row="0">
-            <ImageButton Source="settings.png" Command="{Binding SelectHostCommand}"/>
+            <Picker SelectedIndex="{Binding Filter.Value}">
+                <Picker.Items>
+                    <x:String>ALL</x:String>
+                    <x:String>VIDEO</x:String>
+                    <x:String>PHOTO</x:String>
+                </Picker.Items>
+            </Picker>
+            <ImageButton Style="{StaticResource IconButtonStyle}" Source="laptop.png" Command="{Binding SelectHostCommand}"/>
         </HorizontalStackLayout>
         <ListView
             Grid.Row="1"
@@ -24,11 +31,11 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Item">
                     <ViewCell>
-                        <StackLayout Padding="5">
+                        <VerticalStackLayout Padding="5">
                             <Label Text="{Binding Name}" FontAttributes="Bold"/>
                             <Label Text="{Binding Size}"/>
                             <Border HeightRequest="1" BackgroundColor="Gray"/>
-                        </StackLayout>
+                        </VerticalStackLayout>
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>

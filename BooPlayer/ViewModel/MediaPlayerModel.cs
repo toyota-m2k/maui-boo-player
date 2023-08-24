@@ -2,6 +2,7 @@
 using CommunityToolkit.Maui.Core.Primitives;
 using CommunityToolkit.Maui.Views;
 using Reactive.Bindings;
+using System.Diagnostics;
 using System.Reactive.Linq;
 
 namespace BooPlayer.ViewModel;
@@ -21,6 +22,9 @@ internal class MediaPlayerModel {
     public ReactiveCommand PlayCommand { get; } = new();
     public ReactiveCommand PauseCommand { get; } = new();
     public ReactiveCommand StopCommand { get; } = new();
+    public ReactiveCommand TogglePlayCommand { get; } = new();
+    //public ReactiveCommand DragStartCommand { get; } = new();
+    public ReactiveCommand EndOfMovie { get; } = new();
 
     class SeekMediator : IDisposable {
         private WeakReference<MediaElement>? mPlayer;
@@ -65,6 +69,17 @@ internal class MediaPlayerModel {
             model.StopCommand.Subscribe(_ => {
                 Player?.Stop();
             });
+            model.TogglePlayCommand.Subscribe(_ => {
+                if(Model.IsPlaying.Value) {
+                    model.PauseCommand.Execute();
+                }
+                else {
+                    model.PlayCommand.Execute();
+                }
+            });
+            //model.DragStartCommand.Subscribe(x => {
+            //    Debug.WriteLine(x);
+            //});
 
         }
 

@@ -1,7 +1,6 @@
 ﻿using BooPlayer.Models;
 using BooPlayer.Services;
 using BooPlayer.Utils;
-using BooPlayer.View;
 using Microsoft.Extensions.Logging;
 using Reactive.Bindings;
 using System.Reactive.Linq;
@@ -17,7 +16,9 @@ internal class ItemListViewModel {
     public ReactiveProperty<IHostEntry?> CurrentHostEntry { get; } = new ();
     public ReactiveCommand ReloadListCommand { get; } = new ();
     public ReactiveCommand SelectHostCommand { get; } = new();
-    public ReactiveProperty<List<Item>> ItemList { get; } = new ( _emptyList );
+
+    public ReactiveProperty<List<Item>> RawItemList { get; } = new ( _emptyList );
+    public ReadOnlyReactiveProperty<List<Item>> ItemList { get; }
     //public ReactiveProperty<int> CurrentIndex { get; } = new ( -1 );
     //public ReadOnlyReactiveProperty<Item?> CurrentItem { get; }
     public ReactiveProperty<Item?> CurrentItem { get; } = new ();
@@ -25,6 +26,7 @@ internal class ItemListViewModel {
     //public ReadOnlyReactiveProperty<bool> IsVideo { get; }
     //public ReadOnlyReactiveProperty<string?> CurrentVideoUrl { get; }
     //public ReadOnlyReactiveProperty<string?> CurrentPhotoUrl { get; }
+    public ReactiveProperty<object?> Dummy { get; } = new ();
 
     public ReactiveProperty<bool> IsPhoto { get; } = new ();
     public ReactiveProperty<bool> IsVideo { get; } = new();
@@ -35,6 +37,23 @@ internal class ItemListViewModel {
 
     public MediaPlayerModel PlayerModel { get; } = new ();
 
+    public ReactiveCommand PrevCommand { get; } = new ();
+    public ReactiveCommand NextCommand { get; } = new ();
+    public ReactiveCommand SlideCommand { get; } = new ();
+
+    enum ListFilter {
+        ALL = 0,
+        VIDEO = 1,
+        PHOTO = 2,
+        AUDIO = 3,
+    }
+
+    public ReactiveProperty<int> Filter { get; } = new(0);
+    public ReadOnlyReactiveProperty<bool> PhotoFiltered { get; }
+
+    //ViewerStateManager ViewerStateManager { get; }
+
+
     public ItemListViewModel(IItemListService itemListService, IPageService pageService, ILoggerFactory loggerFactory) {
         _itemListService = itemListService;
         _pageService = pageService;
@@ -42,6 +61,15 @@ internal class ItemListViewModel {
 
         CurrentHostEntry.Subscribe(LoadItemList);
         ReloadListCommand.Subscribe(ReloadItemList);
+
+        ItemList = RawItemList.CombineLatest(Filter, (list, filter) => {
+            switch (filter) {
+                default:
+                case (int)ListFilter.ALL:   return list;
+                case (int)ListFilter.VIDEO: return list.Where(it => it.IsVideo).ToList();
+                case (int)ListFilter.PHOTO: return list.Where(it => it.IsPhoto).ToList();
+            }
+        }).ToReadOnlyReactiveProperty(_emptyList);
 
         //ShowListCommand.Subscribe((it) => {
         //    ShowList.Value = it == "True";
@@ -110,7 +138,7 @@ internal class ItemListViewModel {
         //    }
         //    return item.IsVideo;
         //}).ToReadOnlyReactiveProperty(false);
-        
+
         //IsVideo = CurrentItem.Select(item => {
         //    if (item == null) {
         //        return false;
@@ -118,24 +146,93 @@ internal class ItemListViewModel {
         //    return item.IsVideo;
         //}).ToReadOnlyReactiveProperty(false);
 
+        PhotoFiltered = Filter.Select(it=> it == (int)ListFilter.PHOTO).ToReadOnlyReactiveProperty();
+
         CurrentName = CurrentItem.Select(item => {
             if (item == null) {
                 return "None";
             }
             return item.Name;
         }).ToReadOnlyReactiveProperty("");
+
+        NextCommand.Subscribe(() => {
+            NextItem(true);
+        });
+        PrevCommand.Subscribe(() => {
+            NextItem(false);
+        });
+        SlideCommand.Subscribe(() => {
+            ToggleSlideShow();
+        });
+
     }
 
+    private bool NextItem(bool next) {
+        var current = CurrentItem.Value;
+        if (current == null) return false;
 
+        var index = ItemList.Value.IndexOf(current);
+        if (index == -1) return false;
+        if(next) {
+            index++;
+        } else {
+            index--;
+        }
+        if( 0<=index && index < ItemList.Value.Count ) {
+            CurrentItem.Value = ItemList.Value[index];
+            return true;
+        }
+        return false;
+    }
+
+    CancellationTokenSource? SlideShowCancelToken = null;
+    private void ToggleSlideShow() {
+        lock(this) {
+            if (SlideShowCancelToken == null) {
+                StartSlideShow();
+            } else {
+                StopSlideShow();
+            }
+        }
+    }
+    private void StartSlideShow() {
+        if(SlideShowCancelToken!= null) {
+            return;
+        }
+        SlideShowCancelToken = new();
+        var token = SlideShowCancelToken.Token;
+        Task.Run(async () => {
+            try {
+                while (!token.IsCancellationRequested) {
+                    await Task.Delay(1500, token);
+                    if (!NextItem(true)) {
+                        StopSlideShow();
+                    }
+                }
+            } catch(Exception) {
+            } finally {
+                lock (this) {
+                    SlideShowCancelToken = null;
+                }
+            }
+        });
+
+    }
+    private void StopSlideShow() {
+        lock (this) {
+            SlideShowCancelToken?.Cancel();
+        }
+    }
+    
     private async void LoadItemList(IHostEntry? entry) {
         if (entry == null) {
-            ItemList.Value = _emptyList;
+            RawItemList.Value = _emptyList;
             return;
         }
         try {
-            ItemList.Value = (await _itemListService.GetItemListAsync(entry)).Items.ToList();
+            RawItemList.Value = (await _itemListService.GetItemListAsync(entry)).Items.ToList();
         } catch(Exception e) {
-            ItemList.Value = _emptyList;
+            RawItemList.Value = _emptyList;
             _logger.Error(e);
             await _pageService.ShowConfirmationMessage("Error", $"Failed to load item list from {entry.Name}.");
         }

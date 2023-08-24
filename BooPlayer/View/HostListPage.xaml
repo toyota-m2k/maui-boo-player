@@ -65,8 +65,8 @@
         </Border>
 
         <HorizontalStackLayout IsVisible="{Binding IsEditing.Value, Converter={StaticResource NegBoolConverter}, Mode=OneWay}" HorizontalOptions="Center">
-            <Button Style="{StaticResource PushButtonStyle}" Text="OK" Command="{Binding CompleteCommand}" CommandParameter="True" IsEnabled="{Binding IsReady.Value, Mode=OneWay}"/>
-            <Button Style="{StaticResource PushButtonStyle}" Text="Cancel" Command="{Binding CompleteCommand}" CommandParameter="False" IsVisible="{Binding Cancellable}"/>
+            <Button Style="{StaticResource PushButtonStyle}" Text="OK" Command="{Binding CompleteCommand}" CommandParameter="True" IsEnabled="{Binding IsReady.Value, Mode=OneWay}" WidthRequest="100"/>
+            <Button Style="{StaticResource PushButtonStyle}" Text="Cancel" Command="{Binding CompleteCommand}" CommandParameter="False" IsVisible="{Binding Cancellable}" WidthRequest="100"/>
         </HorizontalStackLayout>
     </VerticalStackLayout>
 </ContentPage>

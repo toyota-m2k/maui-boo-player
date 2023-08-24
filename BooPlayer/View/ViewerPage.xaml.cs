@@ -30,6 +30,10 @@ public partial class ViewerPage : ContentPage {
         ViewModel.PlayerModel.DetachPlayer();
     }
 
+    private void OnMediaEnd(object sender, EventArgs e) {
+        ViewModel.PlayerModel.EndOfMovie.Execute();
+    }
+
     //private void OnLoaded(object? sender, EventArgs e) {
     //    Loaded -= OnLoaded;
     //}

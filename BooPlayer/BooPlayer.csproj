@@ -55,15 +55,22 @@
 
 	<ItemGroup>
 	  <None Remove="appsettings.json" />
+	  <None Remove="Resources\Images\camera.svg" />
 	  <None Remove="Resources\Images\close_box.svg" />
 	  <None Remove="Resources\Images\delete.svg" />
 	  <None Remove="Resources\Images\laptop.svg" />
+	  <None Remove="Resources\Images\multimedia.svg" />
+	  <None Remove="Resources\Images\next.svg" />
 	  <None Remove="Resources\Images\pause.svg" />
 	  <None Remove="Resources\Images\pencil.svg" />
+	  <None Remove="Resources\Images\photo.svg" />
 	  <None Remove="Resources\Images\play.svg" />
 	  <None Remove="Resources\Images\plus_box.svg" />
+	  <None Remove="Resources\Images\prev.svg" />
 	  <None Remove="Resources\Images\settings.svg" />
+	  <None Remove="Resources\Images\slide.svg" />
 	  <None Remove="Resources\Images\stop.svg" />
+	  <None Remove="Resources\Images\video.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -78,6 +85,7 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="ReactiveProperty" Version="9.2.0" />
+		<PackageReference Include="System.Reactive.Linq" Version="6.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -88,6 +96,9 @@
 
 	<ItemGroup>
 	  <MauiXaml Update="CommonResources.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="View\ControlPanel.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="View\HostListPage.xaml">

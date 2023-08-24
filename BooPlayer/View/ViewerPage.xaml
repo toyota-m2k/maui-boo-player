@@ -2,13 +2,14 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:local="clr-namespace:BooPlayer.View"
              x:Class="BooPlayer.View.ViewerPage"
              Title="ViewerPage"
              >
     <ContentPage.Resources>
         <ResourceDictionary Source="../CommonResources.xaml"/>
     </ContentPage.Resources>
-    <Grid BackgroundColor="Green">
+    <Grid BackgroundColor="Black">
         <Image
             Source="{Binding CurrentPhotoUrl.Value, Mode=OneWay}"
             />
@@ -25,21 +26,23 @@
                 MediaHeight="{Binding PlayerModel.ROMediaHeight.Value, Mode=OneWayToSource}"
                 Volume= "{Binding PlayerModel.Volume.Value, Mode=OneWay}"
                 Speed = "{Binding PlayerModel.Speed.Value, Mode=OneWay}"
-            />
-            <VerticalStackLayout x:Name="ControlPanel" HorizontalOptions="Fill" Margin="20,0" VerticalOptions="End">
-                <StackLayout Orientation="Horizontal">
-                    <Button Style="{StaticResource PushButtonStyle}" ImageSource="play.png" Text="Play" Command="{Binding PlayerModel.PlayCommand}">
-                    </Button>
-
-                    <Button Style="{StaticResource PushButtonStyle}" Text="Pause" Command="{Binding PlayerModel.PauseCommand}"/>
-                    <Button Style="{StaticResource PushButtonStyle}" Text="Stop" Command="{Binding PlayerModel.StopCommand}"/>
-                </StackLayout>
+                MediaEnded="OnMediaEnd"
+            >
+                <toolkit:MediaElement.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding PlayerModel.TogglePlayCommand}"/>
+                    <!--<DragGestureRecognizer DragStartingCommand="{Binding PlayerModel.DragStartCommand}"/>-->
+                </toolkit:MediaElement.GestureRecognizers>
+            </toolkit:MediaElement>
+            <Grid VerticalOptions="End" HorizontalOptions="Fill">
                 <Slider
                     x:Name="PositionSlider"
                     HorizontalOptions="Fill"
                     Minimum="0" Maximum="{Binding PlayerModel.RODuration.Value, Mode=OneWay, Converter={StaticResource TimeSpanDoubleConverter}}"
                     />
-            </VerticalStackLayout>
+            </Grid>
         </Grid>
+        <VerticalStackLayout VerticalOptions="Start" HorizontalOptions="Fill">
+            <local:ControlPanel/>
+        </VerticalStackLayout>
     </Grid>
 </ContentPage>
