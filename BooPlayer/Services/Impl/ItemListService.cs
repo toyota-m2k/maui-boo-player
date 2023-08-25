@@ -39,6 +39,22 @@ internal class ItemListService : IItemListService {
         }
     }
 
+    public async Task<bool> KeepAlive(IHostEntry host, CancellationToken ct) {
+        if (host.AccessToken.IsEmpty()) return true;
+        var url = $"http://{host.Address}/auth/{host.AccessToken}";
+        using (var response = await httpClient.GetAsync(url, ct)) {
+            if(response.IsSuccessStatusCode) {
+                return true;
+            }
+            else if (response?.StatusCode == HttpStatusCode.Unauthorized) {
+                if (await Authenticate(host, response)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private async Task<ItemList?> GetItemListCoreAsync(IHostEntry host, CancellationToken ct) {
         var url = host.AccessToken.IsEmpty() ? $"http://{host.Address}/list?type=all" : $"http://{host.Address}/list?type=all&auth={host.AccessToken}";
         using (var response = await httpClient.GetAsync(url, ct)) {

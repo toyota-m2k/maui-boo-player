@@ -48,7 +48,7 @@ internal class HostListViewModel {
         });
 
         BeginEditCommand.Subscribe(host => {
-            host = host ?? SelectedHost.Value;
+            //host = host ?? SelectedHost.Value;
             if (host != null) {
                 EditingAddress.Value = host.Address;
                 EditingName.Value = host.Name;
@@ -61,7 +61,11 @@ internal class HostListViewModel {
             }
             IsEditing.Value = false;
         });
-
+        RemoveHostCommand.Subscribe(host => {
+            if (host != null) {
+                _hostEntryList.RemoveHost(host.Address);
+            }
+        });
         CompleteCommand.Subscribe(ok => {
             if (ok == "True") {
                 var host = SelectedHost.Value;

@@ -4,6 +4,8 @@ using BooPlayer.Utils;
 using Microsoft.Extensions.Logging;
 using Reactive.Bindings;
 using System.Reactive.Linq;
+using System.Reflection;
+using System.Threading;
 
 namespace BooPlayer.ViewModel;
 internal class ItemListViewModel {
@@ -13,33 +15,33 @@ internal class ItemListViewModel {
 
     private static List<Item> _emptyList = new List<Item>();
 
-    public ReactiveProperty<IHostEntry?> CurrentHostEntry { get; } = new ();
-    public ReactiveCommand ReloadListCommand { get; } = new ();
+    public ReactiveProperty<IHostEntry?> CurrentHostEntry { get; } = new();
+    public ReactiveCommand ReloadListCommand { get; } = new();
     public ReactiveCommand SelectHostCommand { get; } = new();
 
-    public ReactiveProperty<List<Item>> RawItemList { get; } = new ( _emptyList );
+    public ReactiveProperty<List<Item>> RawItemList { get; } = new(_emptyList);
     public ReadOnlyReactiveProperty<List<Item>> ItemList { get; }
     //public ReactiveProperty<int> CurrentIndex { get; } = new ( -1 );
     //public ReadOnlyReactiveProperty<Item?> CurrentItem { get; }
-    public ReactiveProperty<Item?> CurrentItem { get; } = new ();
+    public ReactiveProperty<Item?> CurrentItem { get; } = new();
     //public ReadOnlyReactiveProperty<bool> IsPhoto { get; }
     //public ReadOnlyReactiveProperty<bool> IsVideo { get; }
     //public ReadOnlyReactiveProperty<string?> CurrentVideoUrl { get; }
     //public ReadOnlyReactiveProperty<string?> CurrentPhotoUrl { get; }
-    public ReactiveProperty<object?> Dummy { get; } = new ();
+    public ReactiveProperty<object?> Dummy { get; } = new();
 
-    public ReactiveProperty<bool> IsPhoto { get; } = new ();
+    public ReactiveProperty<bool> IsPhoto { get; } = new();
     public ReactiveProperty<bool> IsVideo { get; } = new();
     public ReactiveProperty<string?> CurrentVideoUrl { get; } = new();
     public ReactiveProperty<string?> CurrentPhotoUrl { get; } = new();
 
     public ReadOnlyReactiveProperty<string> CurrentName { get; }
 
-    public MediaPlayerModel PlayerModel { get; } = new ();
+    public MediaPlayerModel PlayerModel { get; } = new();
 
-    public ReactiveCommand PrevCommand { get; } = new ();
-    public ReactiveCommand NextCommand { get; } = new ();
-    public ReactiveCommand SlideCommand { get; } = new ();
+    public ReactiveCommand PrevCommand { get; } = new();
+    public ReactiveCommand NextCommand { get; } = new();
+    public ReactiveCommand SlideCommand { get; } = new();
 
     enum ListFilter {
         ALL = 0,
@@ -51,6 +53,8 @@ internal class ItemListViewModel {
     public ReactiveProperty<int> Filter { get; } = new(0);
     public ReadOnlyReactiveProperty<bool> PhotoFiltered { get; }
 
+    private LifeKeeper _lifeKeeper;
+
     //ViewerStateManager ViewerStateManager { get; }
 
 
@@ -58,6 +62,7 @@ internal class ItemListViewModel {
         _itemListService = itemListService;
         _pageService = pageService;
         _logger = loggerFactory.CreateLogger("ItemList");
+        _lifeKeeper = new LifeKeeper(itemListService,_logger);
 
         CurrentHostEntry.Subscribe(LoadItemList);
         ReloadListCommand.Subscribe(ReloadItemList);
@@ -224,15 +229,56 @@ internal class ItemListViewModel {
         }
     }
     
+    class LifeKeeper {
+        private IHostEntry? _host;
+        private IItemListService _itemListService;
+        private ILogger _logger;
+
+        public LifeKeeper(IItemListService itemListService, ILogger logger) {
+            _itemListService = itemListService;
+            _logger = logger;
+        }
+        public IHostEntry? Host {
+            get => _host; 
+            set {
+                lock(this) { 
+                    _host = value;
+                    KeepAlive(value);
+                }
+            }
+        }
+        CancellationTokenSource? _cancellationTokenSouce = null;
+        private void KeepAlive(IHostEntry? host) {
+            _cancellationTokenSouce?.Cancel();
+            if (host == null) {
+                _cancellationTokenSouce = null;
+            }
+            else {
+                var cts = new CancellationTokenSource();
+                _cancellationTokenSouce = cts;
+                Task.Run(async () => {
+                    while (!cts.IsCancellationRequested) {
+                        await Task.Delay(30 * 1000, cts.Token); // 30秒に１回くらいでどうだろう。
+                        await _itemListService.KeepAlive(host, cts.Token);
+                    }
+                }, cts.Token);
+            }
+        }
+    }
+
+
     private async void LoadItemList(IHostEntry? entry) {
         if (entry == null) {
             RawItemList.Value = _emptyList;
+            _lifeKeeper.Host = null;
             return;
         }
         try {
             RawItemList.Value = (await _itemListService.GetItemListAsync(entry)).Items.ToList();
+            _lifeKeeper.Host = entry;
         } catch(Exception e) {
             RawItemList.Value = _emptyList;
+            _lifeKeeper.Host = null;
             _logger.Error(e);
             await _pageService.ShowConfirmationMessage("Error", $"Failed to load item list from {entry.Name}.");
         }
