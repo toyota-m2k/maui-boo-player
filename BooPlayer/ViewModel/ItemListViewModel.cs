@@ -43,6 +43,11 @@ internal class ItemListViewModel {
     public ReactiveCommand NextCommand { get; } = new();
     public ReactiveCommand SlideCommand { get; } = new();
 
+    private SlideShowManager _slideShowManager;
+
+    public IReadOnlyReactiveProperty<bool> SlideShowEnabled => _slideShowManager.EnabledProp;
+
+
     enum ListFilter {
         ALL = 0,
         VIDEO = 1,
@@ -166,8 +171,9 @@ internal class ItemListViewModel {
         PrevCommand.Subscribe(() => {
             NextItem(false);
         });
+        _slideShowManager = new SlideShowManager(this);
         SlideCommand.Subscribe(() => {
-            ToggleSlideShow();
+            _slideShowManager.Enabled = !_slideShowManager.Enabled;
         });
 
     }
@@ -190,44 +196,114 @@ internal class ItemListViewModel {
         return false;
     }
 
-    CancellationTokenSource? SlideShowCancelToken = null;
-    private void ToggleSlideShow() {
-        lock(this) {
-            if (SlideShowCancelToken == null) {
-                StartSlideShow();
-            } else {
-                StopSlideShow();
+    class SlideShowManager {
+        private WeakReference<ItemListViewModel> _parentRef;
+        private ItemListViewModel? Parent => _parentRef.GetValue();
+        private Item? CurrentItem => Parent?.CurrentItem?.Value;
+        public SlideShowManager(ItemListViewModel parent) {
+            _parentRef = new WeakReference<ItemListViewModel>(parent);
+            parent.CurrentItem.Subscribe((item) => {
+                if(item != null && item.IsPhoto) {
+                    Resume();
+                }
+            });
+            parent.PlayerModel.EndOfMovie.Subscribe(Next);
+        }
+
+        private ReactiveProperty<bool> _slideShowProp = new ReactiveProperty<bool>(false);
+        private bool _slideShowEnabled {
+            get => _slideShowProp.Value;
+            set => _slideShowProp.Value = value;
+        }
+
+        public IReadOnlyReactiveProperty<bool> EnabledProp => _slideShowProp;
+        public bool Enabled {
+            get => _slideShowEnabled;
+            set {
+                if (value) {
+                    Start();
+                } else {
+                    Stop();
+                }
             }
         }
-    }
-    private void StartSlideShow() {
-        if(SlideShowCancelToken!= null) {
-            return;
+
+        private void Start() {
+            lock (this) {
+                if (_slideShowEnabled) return;
+                _slideShowEnabled = true;
+                Resume();
+            }
         }
-        SlideShowCancelToken = new();
-        var token = SlideShowCancelToken.Token;
-        Task.Run(async () => {
-            try {
-                while (!token.IsCancellationRequested) {
-                    await Task.Delay(1500, token);
-                    if (!NextItem(true)) {
-                        StopSlideShow();
+        private void Stop() {
+            lock (this) {
+                _slideShowEnabled = false;
+            }
+        }
+
+        private void Resume() {
+            lock (this) {
+                if (_slideShowEnabled) {
+                    var item = CurrentItem;
+                    if (item != null && item.IsPhoto) {
+                        Task.Run(async () => {
+                            await Task.Delay(1500);
+                            Next();
+                        });
                     }
                 }
-            } catch(Exception) {
-            } finally {
-                lock (this) {
-                    SlideShowCancelToken = null;
+            }
+        }
+
+        private void Next() {
+            lock (this) {
+                if (_slideShowEnabled) {
+                    Parent?.NextCommand?.Execute();
                 }
             }
-        });
+        }
 
     }
-    private void StopSlideShow() {
-        lock (this) {
-            SlideShowCancelToken?.Cancel();
-        }
-    }
+
+    //bool _slideShow = false;
+    //CancellationTokenSource? SlideShowCancelToken = null;
+    //private void ToggleSlideShow() {
+    //    lock(this) {
+    //        if(!_slideShow) {
+    //            StartSlideShow();
+    //        } else {
+    //            StopSlideShow();
+    //        }
+    //    }
+    //}
+    //private void StartSlideShow() {
+    //    if(SlideShowCancelToken!= null) {
+    //        return;
+    //    }
+    //    SlideShowCancelToken = new();
+    //    var token = SlideShowCancelToken.Token;
+    //    Task.Run(async () => {
+    //        try {
+    //            while (!token.IsCancellationRequested) {
+    //                await Task.Delay(1500, token);
+    //                if (!NextItem(true)) {
+    //                    StopSlideShow();
+    //                }
+    //            }
+    //        } catch(Exception) {
+    //        } finally {
+    //            lock (this) {
+    //                SlideShowCancelToken = null;
+    //            }
+    //        }
+    //    });
+
+    //}
+    //private void StopSlideShow() {
+    //    lock (this) {
+    //        SlideShowCancelToken?.Cancel();
+    //    }
+    //}
     
     class LifeKeeper {
         private IHostEntry? _host;

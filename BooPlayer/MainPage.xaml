@@ -6,6 +6,7 @@
              x:Class="BooPlayer.MainPage"
             FlyoutLayoutBehavior="Popover"
             IsPresented="False"
+            Title="fuga"
             >
     <FlyoutPage.Flyout>
         <local:ListPage/>

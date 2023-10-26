@@ -16,7 +16,8 @@
         </HorizontalStackLayout>
 
         <HorizontalStackLayout HorizontalOptions="End" VerticalOptions="Start">
-            <ImageButton Style="{StaticResource IconButtonStyle}" Source="slide.png" Command="{Binding SlideCommand}" IsVisible="{Binding PhotoFiltered.Value}"/>
+            <ImageButton Style="{StaticResource IconButtonStyle}" Source="slide.png" Command="{Binding SlideCommand}" IsVisible="{Binding SlideShowEnabled.Value, Converter={StaticResource NegBoolConverter}}"/>
+            <ImageButton BackgroundColor="AliceBlue" Style="{StaticResource IconButtonStyle}" Source="slide_w.png" Command="{Binding SlideCommand}" IsVisible="{Binding SlideShowEnabled.Value}"/>
             <ImageButton Style="{StaticResource IconButtonStyle}" Source="prev.png" Command="{Binding PrevCommand}"/>
             <ImageButton Style="{StaticResource IconButtonStyle}" Source="next.png" Command="{Binding NextCommand}"/>
         </HorizontalStackLayout>
